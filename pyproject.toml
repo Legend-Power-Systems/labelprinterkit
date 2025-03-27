@@ -8,7 +8,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-pillow = "^9.5.0"
+pillow = "^11.1.0"
 pyusb = "^1.2.1"
 packbits = "^0.6"
 pyserial = {version = "^3.5", optional = true}

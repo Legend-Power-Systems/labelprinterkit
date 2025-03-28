@@ -11,15 +11,21 @@ from .constants import Resolution
 def image_to_bitmap(image: Image) -> Tuple[bytes, int, int]:
     assert image.mode == "1"
     image = image.transpose(Image.ROTATE_270).transpose(Image.FLIP_TOP_BOTTOM)
-    image = ImageChops.invert(image)
-    return image.tobytes(), image.size[0], image.size[1]
+    # HACK: ImageChops.invert no longer seems to work on 1bit images in Pillow 11.
+    # Invert bitmap manually.
+    #image = ImageChops.invert(image)
+    img_bytes = bytes((~x & 0xff) for x in image.tobytes())
+    return img_bytes, image.size[0], image.size[1]
 
 
 def bitmap_to_image(bitmap: bytes, width: int, length: int) -> Image:
+    # HACK: ImageChops.invert no longer seems to work on 1bit images in Pillow 11.
+    # Invert bitmap manually.
+    bitmap = bytes((~x & 0xff) for x in bitmap)
     image = Image.frombytes('1', (width, length), bitmap)
     image = image.transpose(Image.FLIP_TOP_BOTTOM)
     image = image.transpose(Image.ROTATE_90)
-    image = ImageChops.invert(image)
+    #image = ImageChops.invert(image)
     return image
 
 
